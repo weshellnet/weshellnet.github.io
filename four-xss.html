@@ -1,0 +1,123 @@
+<!DOCTYPE HTML><html><head><meta charset="utf-8"><title>XML和AJAX介绍 | 安全天使&#39;Blog</title><meta name="author" content="Angel"><meta name="description" content="Web为八亿网民提供了场所，是一亿网站之家以及每天具有数十亿美金的传输。作为全球化的一个现象，国际贸易已经依赖于互联网"><meta name="keywords" content="安全天使,4ngel,安全博客,漏洞查询利用,黑客博客,网络安全"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta property="og:title" content="XML和AJAX介绍"/><meta property="og:site_name" content="安全天使&#39;Blog"/><meta property="og:image" content="undefined"/><link rel="alternative" href="/atom.xml" title="安全天使&#39;Blog" type="application/atom+xml"><link href="/favicon.jpg" rel="icon"><link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet"><link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css"><link rel="stylesheet" href="/css/style.css" media="screen" type="text/css"><link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css"><link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css"><link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css"><link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css"><script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script><script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script></head><body id="body" data-spy="scroll" data-target=".toc"><div class="container" id="container">	<div class="content">	<div class="page-header"><h1><a class="brand" href="/">Go Back</a><span class="split"></span><span class="title">XML和AJAX介绍</h1></div><span class="date" id="title-date"><strong><i class="fa fa-clock-o"></i>1月 2 2015</strong></span>		<div class="row page">  	<div class="col-xs-12 col-sm-3 col-md-3 toc"> 	<!-- toc -->
+<script type="text/javascript">
+		jQuery(document).ready(function() {
+ 		   generateWikiTOC('.note', '.toc',  2 , 2 );
+		});
+</script></div><div class="col-xs-12 col-sm-9 col-md-9 note">		<h2 id="XML和AJAX介绍">XML和AJAX介绍</h2>
+<p>我们假设本书的读者都有JavaScript和Html的基础，这两门技术都是基于一个被广泛传播很久的标准，已经有无数的关于他们是怎么工作以及你可以采用他们在网络上做什么的信息。然而，介于AJAX和XML(eXtensible Markup Language)刚刚被引入互联网世界，我们觉得对这两门技术进行一个基础的概述是很有必要的。</p>
+<p>人们一般认为AJAX比XML更强一些，因为XML是AJAX的缩写的一部分。但是事实上并不是如此的。AJAX描述了一种可以有时悄悄进行web开发练习的方法。从基础上来说，AJAX是一组为了创建可以提高用户体验、可用性以及速度的Web应用的技术的集合。<br>在2005年这个词被主流Web开发者所使用，但AJAX的历史很悠久的。这门在今天被广泛使用的核心技术是由微软在开发远程脚本技术的时候首次使用。和传统的由DHTML定义的技术如IFRAME和LAYER比起来，由AJAX定义的这组技术是一个好的多选择。<br>AJAX的最基本的组成元素是XMLHttpRequest JavaScript对象。这个对象提供一种可以从远程服务器得到数据但是不需要刷新整个已经载入的页面的机制。根据使用的浏览器，这个对象可以产生很多不同的特色。XMLHttpRequest对象设计的很简单直观，下面的例子就是怎么发送请求以及使用请求。</p>
+<h3 id="code">code</h3>
+<pre><code>
+// instantiate new XMLHttpRequest
+ var request = new XMLHttpRequest;
+ // handle request result
+ request.onreadystatechange = function () {
+    if (request.readyState == 4) {
+       // do something with the content
+  alert(request.responseText);
+    }
+};
+ // open a request to /service.php
+ request.open('GET', '/service.php', false)
+ // send the request
+ request.send(null);</code></pre>
+
+<h2 id="XMLhttpRequest">XMLhttpRequest</h2>
+<p> 由于各种原因，XMLHttpRequest对象并不能在所有浏览器上以相同的方式执行。这是由于AJAX是一门新技术，虽然他的标准很快就被制定了，但是仍然有很多我们需要解决各种浏览器的互斥问题的情况。这些问题通常是借助于AJAX的库来解决，但是作为安全研究，我们一般都要使用纯净的基础版本。<br>正如我们前面提到的，XMLHttpRequest对象是依赖浏览器版本的。例如微软的IE浏览器需要使用ActiveXObjext(‘Msxml2.XMLHTTP’)或者甚至是ActiveXObjext(‘Microsoft.XMLHTTP’)来创建和标准的XMLHttpRequest类似的对象。其余的浏览器也许有不同的方法来实现相同的事情，为了保证可以适配所有的浏览器的不同之处，我们通常喜欢用这里定义的函数：</p>
+<h3 id="code_demo">code demo</h3>
+<pre><code>
+function getXHR () {
+    var xhr = null;
+    if (window.XMLHttpRequest) {
+        xhr = new XMLHttpRequest();
+    } else if (window.createRequest) {
+        xhr = window.createRequest();
+    } else if (window.ActiveXObjext) {
+        try {
+            xhr = new ActiveXObjext('Msxml2.XMLHTTP');
+        } catch(e) {
+            try {
+                xhr = new ActiveXObjext('Microsoft.XMLHTTP');
+            } catch (e) {}
+        }
+    }
+ return xhr;
+};
+ // make new XMLHttpRequest objext
+ var xhr = getXHR();
+ </code></pre>
+
+<p>表1.1总结了XMLHttpRequest对象的方法和属性<br>abort()中止请求<br>方法/属性    描述<br>abort()    中止请求<br>getAllResponseHeaders()    以字符串的形式取回响应的头部<br>getResponseHeader(name)    取回特定名字的头部的值<br>setRequestHeader(name, value)    根据名字设定头部的值<br>open(method, URL, [asynchronous], [username, password])    设定使用的方法以及取回的网址，打开请求对象<br>onreadystatechange    这个属性可以获得当这个请求通过不同的状态时将要调用的事件的引用<br>readyState    readyState参数定义了请求的状态，可能的值有:<br>0 – 未初始化<br>1 – 打开<br>2 – 已发出<br>3 – 正在接收<br>4 – 加载完成<br>status    status属性返回响应状态码，如果请求成功则是200，如果需要重定向则是302，其他的状态码也是可能的<br>statusText    这个属性返回和状态码相关的描述<br>responseText    responseText属性返回响应体<br>responseXML    responseXML与responseText相似，但是如果服务器以XML作为响应，浏览器将将它转化为易存储的结构，这种结构通常被称为Documnet Object Model(DOM)<br>请注意responseXML和responseText的区别，他们都是返回响应体，但他们在功能方面确实有一些不同。</p>
+<p>特别地，responseText被用于取回文本文档、HTML页面、二进制页面以及所有不是XML格式的网页。当我们需要处理XML的时候，我们使用responseXML属性，它会将响应文档解析成DOM对象。</p>
+<h2 id="responeseXML">responeseXML</h2>
+<p>我们已经展示了，responseText是怎么工作的，所以让我们看一下responseXML的应用。在提供另一个例子之前，我们先解释一下XML的作用。</p>
+<p>XML是用来展示含义而不是像HTML那样展示结构，XML是一种具有具有自我描述性的没有作为的语言。其他与XML标准相关的是XPath, Extensible Stylesheet Language Transformation(XSLT), XML Schema Definition (XSD), Xlink, XForms, Simple Object Access Protecol (SOAP), XMLRPC等等。我们不能对这些全部进行讲解，因为这已经超出了本书 的范围，但是你可以在www.w3c.org上查阅他们。</p>
+<p>虽然XML和HTML不同，但是他们都是由被称作元素和标签的块组成的。XML和HTML的元素都是高度结构化的。他们可以用一个树的结构表现，这通常被称作DOM。事实上，DOM是由World Wide Web Consortium定义的一组规格，它定义了XML结构是怎么被创建的以及他具有哪些方法属性，正如我们前面所说，HTML也可以被解析成DOM树。</p>
+<p>其中一个最常使用的DOM函数是getElementsByTagName,它返回一个元素的数组。另一个流行的函数是getElementById，返回一个基于id的单独的元素。例如，借助JavaScript的帮助，我们可以轻松的提取所有的</p><p>元素并且用”Hello World”代替他们。例如:</p>
+<h3 id="demo_code">demo code</h3>
+<pre><code>
+// get a list of all element
+ var p = document.getElementsByTagName('p');
+ // iterate over the list
+ for (var i = 0; i < p.lenght; i++) {
+// set the text of each to 'Hello World!'
+ p[i].innerHTML = 'Hello World'
+}
+ </code></pre>
+
+<p>采用类似的方法，我们可以和XMLHttpRequest对象中的XML响应属性相互配合，就如前面描述的那样。例如：</p>
+<h3 id="code_demo_2">code demo 2</h3>
+<pre><code>
+function getXHR () {
+    var xhr = null;
+    if (window.XMLHttpRequest) {
+        xhr = new XMLHttpRequest();
+    } else if (window.createRequest) {
+        xhr = window.createRequest();
+    } else if (window.ActiveXObjext) {
+        try {
+            xhr = new ActiveXObjext('Msxml2.XMLHTTP');
+        } catch(e) {
+            try {
+                xhr = new ActiveXObjext('Microsoft.XMLHTTP');
+            } catch (e) {}
+        }
+    }
+
+    return xhr;
+};
+// make new XMLHttpRequest object
+var request = getXHR();
+ // handle request result
+ request.onreadystatechange = function () {
+    if (request.readyState == 4) {
+ // do something with the content but in XML
+ alert(request.responseXML.getElementsById('message'));
+    }
+};
+ // open a request to /service.xml.php
+request.open('GET', '/service.xml.php', false)
+ // send the request
+ request.send(null);
+// make new XMLHttpRequest objext
+ var xhr = getXHR();
+ </code></pre>
+
+<p>如果服务器响应包括以下内容：</p>
+<h3 id="code_demo_3">code demo 3</h3>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">messageForYou</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">overHere</span> <span class="attribute">id</span>=<span class="value">"message"</span>&gt;</span>Hello World!<span class="tag">&lt;/<span class="title">overHere</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">messageForYou</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>浏览器就将在一个警告框里显示”Hello World!”。<br>理解基础的XML和AJAX是很重要的，它们已经成为了Internet不可或缺的一部分，它们对于理解这些技术对于传统Web应用的安全测试的影响也是很重要的。</p>
+<h2 id="总结">总结</h2>
+<p>XSS是一种可以窃取敏感信息、劫持用户sessions、危机浏览器以及系统安全的攻击向导，XSS攻击自从Web早期就已经存在。今天他们对于电子商务产生了最大的威胁。</p>
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_bdhome" data-cmd="bdhome" title="分享到百度新首页"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_mshare" data-cmd="mshare" title="分享到一键分享"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>&nbsp;<div class="tucao">❐ 热评文章：<br /><div class="ds-top-threads" data-range="monthly" data-num-items="8"></div><div class="urlid"> &nbsp;&nbsp;[ <a href="" target="_blank">XML和AJAX介绍</a> ]由Angel发表在 <a href="/">安全天使</a><br />&nbsp; [ 引用地址 ]：http://www.weshell.net/four-xss.html</div></div>
+<div class="ds-thread" data-title="XML和AJAX介绍" data-url="http://www.weshell.net/four-xss.html"></div><script type="text/javascript">var duoshuoQuery = {short_name:"webshellhost"};(function() {    var ds = document.createElement('script');    ds.type = 'text/javascript';ds.async = true;    ds.src = 'http://static.duoshuo.com/embed.js';    ds.charset = 'UTF-8';    (document.getElementsByTagName('head')[0]    || document.getElementsByTagName('body')[0]).appendChild(ds);})();</script>
+	</div></div><div class="container-narrow">	<footer>
+<script>var _hmt = _hmt || [];(function() {  var hm = document.createElement("script");  hm.src = "//hm.baidu.com/hm.js?248313087381630ea1a3caba0e789997";  var s = document.getElementsByTagName("script")[0];   s.parentNode.insertBefore(hm, s);})();</script>
+<SCRIPT language=javascript>function g(formname)	{var url = "http://www.baidu.com/baidu";if (formname.s[1].checked) {	formname.ct.value = "2097152";}else {	formname.ct.value = "0";}formname.action = url;return true;}</SCRIPT><center><form name="f1" onsubmit="return g(this)" target="_blank"><table bgcolor="#FFFFFF" style="font-size:9pt;"><tr height="60"><td valign="top"></td><td><input name=word size="35" maxlength="100" style="width: 210px;height: 24px;line-height: 24px;font: 14px arial;padding: 2px 5px;margin-right: 3px;border: 2px solid black;outline: 0;vertical-align: middle;margin-top:-27px;"><input type="submit" value="Scan" style="width: 66px;height: 24px;border: 0;color: #ccc;background: black;font-weight: bold;font: bold 14px arial;padding: 0;padding-top: 1px;margin-top:-27px;cursor: pointer;vertical-align: middle;"><br><input name=tn type=hidden value="bds"><input name=cl type=hidden value="3"><input name=ct type=hidden><input name=si type=hidden value="www.weshell.net"><input name=s type=radio style="display:none;"><input name=s type=radio checked style="display:none;"></td></tr></table></form>
+<div class="weshell"><font size="0.4em"><strong>[ &copy; 2006-2013 <a href="http://www.weshell.net">安全天使&Angel</a> ] -  [<a href="http://www.miitbeian.gov.cn" target="_blank"> 鄂ICP备105632号-1</a> ] - [<a href="/atom.xml"> RSS源</a> - <a href="/baidusitemap.xml">引擎地图</a> - <a href="https://i0yy.com" target="_blank">自建社工库</a> ]</div>
+<script language="javascript" type="text/javascript" src="http://quote.51.la/?id=17600924&amp;mb=3"></script></font></strong></center><div style="display:none"><script language="javascript" type="text/javascript" src="http://js.users.51.la/17600924.js"></script></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+</footer></div><a id="gotop" href="#"><span>▲</span></a><script src="/js/jquery.imagesloaded.min.js"></script><script src="/js/gallery.js"></script><script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script src="/js/jquery.tableofcontents.min.js"></script><script src="/js/tocgenerator.min.js"></script><script src="/js/main.js"></script><link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css"><script src="/fancybox/jquery.fancybox.pack.js"></script><script type="text/javascript">(function($){  $('.fancybox').fancybox();})(jQuery);</script></body></html>
